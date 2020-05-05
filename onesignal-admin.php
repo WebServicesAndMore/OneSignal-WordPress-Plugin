@@ -573,11 +573,13 @@ class OneSignal_Admin
     }
 
     public static function exec_post_request($onesignal_post_url, $request, $retry_count) { 
+	    error_log("OneSignal: exec_post_request: retry:".$retry_count));	
         if ($retry_count === 0) { 
             return NULL;
         }
 
         $response = wp_remote_post($onesignal_post_url, $request);
+	    error_log("OneSignal Response: ".json_encode($response));	
 
         if (is_wp_error($response) || !is_array($response) || !isset($response['body'])) {
             return self::exec_post_request($onesignal_post_url, $request, $retry_count-1); 
@@ -788,7 +790,7 @@ class OneSignal_Admin
                 );
 
 		$response = self::exec_post_request($onesignal_post_url, $request, 20);  // try 20 times
-		
+	    error_log("OneSignal Response: ".json_encode($response));	
 		if (is_null($response)) {
             set_transient('onesignal_transient_error', '<div class="error notice onesignal-error-notice">
                 <p><strong>OneSignal Push:</strong><em> There was a problem sending your notification.</em></p>
